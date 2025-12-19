@@ -24,7 +24,7 @@ interface ApiService {
 }
 
 object NetworkClient {
-    // TODO: update to your server
+    // TODO: update to your server URL or configure via BuildConfig for different environments
     private const val BASE_URL = "https://YOUR_SERVER_URL"
 
     private val retrofit: Retrofit by lazy {

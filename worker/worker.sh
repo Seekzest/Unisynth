@@ -29,18 +29,18 @@ while true; do
     echo "Extract frames (one frame per second)"
     mkdir -p images
     for f in *.mp4; do
-      ffmpeg -i "$f" -vf "fps=1" images/${f%.*}_%05d.jpg
+      ffmpeg -i "$f" -vf "fps=1" "images/${f%.*}_%05d.jpg"
     done
 
     echo "Run COLMAP feature extraction and matching"
     # Create COLMAP project
-    COLMAP_DATABASE=db
+    COLMAP_DATABASE="db"
     mkdir -p colmap
     # feature extraction
-    colmap feature_extractor --database_path $COLMAP_DATABASE --image_path images
-    colmap exhaustive_matcher --database_path $COLMAP_DATABASE
+    colmap feature_extractor --database_path "$COLMAP_DATABASE" --image_path images
+    colmap exhaustive_matcher --database_path "$COLMAP_DATABASE"
     mkdir -p sparse
-    colmap mapper --database_path $COLMAP_DATABASE --image_path images --output_path sparse
+    colmap mapper --database_path "$COLMAP_DATABASE" --image_path images --output_path sparse
 
     echo "Convert sparse to dense and run OpenMVS or COLMAP dense"
     mkdir -p dense

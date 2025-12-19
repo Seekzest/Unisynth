@@ -12,6 +12,9 @@ import com.google.android.gms.location.LocationServices
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
+    // NOTE: This uses deprecated onRequestPermissionsResult for simplicity.
+    // For production, consider using registerForActivityResult with
+    // ActivityResultContracts.RequestMultiplePermissions() instead.
     private val REQUEST_PERMS = 1001
     private val scope = MainScope()
     private lateinit var recorder: VideoRecorder
@@ -29,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_PERMS) {
             var allGranted = true
             for (r in grantResults) if (r != PackageManager.PERMISSION_GRANTED) allGranted = false

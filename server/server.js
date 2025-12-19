@@ -42,9 +42,9 @@ app.post('/upload', upload.single('video'), (req, res) => {
         }
         
         const metadata = req.body.metadata ? JSON.parse(req.body.metadata) : {};
-        const projectId = (metadata.projectId || 'default').replace(/[^a-zA-Z0-9_-]/g, '');
-        if (!projectId) {
-            return res.status(400).send('Invalid project ID');
+        let projectId = (metadata.projectId || 'default').replace(/[^a-zA-Z0-9_-]/g, '');
+        if (!projectId || projectId.trim() === '') {
+            projectId = 'default';
         }
         
         const projectDir = path.join(STORAGE_DIR, 'projects', projectId);
