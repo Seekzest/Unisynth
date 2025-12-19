@@ -13,9 +13,15 @@ const STORAGE_DIR = process.env.STORAGE_DIR || path.join(__dirname, 'storage');
 if (!fs.existsSync(STORAGE_DIR)) fs.mkdirSync(STORAGE_DIR, { recursive: true });
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : '*'
+}));
 const server = http.createServer(app);
-const io = new socketIo.Server(server, { cors: { origin: "*" }});
+const io = new socketIo.Server(server, { 
+    cors: { 
+        origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : "*" 
+    }
+});
 
 const upload = multer({ dest: path.join(STORAGE_DIR, 'uploads/') });
 
@@ -28,13 +34,22 @@ API:
 app.post('/upload', upload.single('video'), (req, res) => {
     try {
         const file = req.file;
+        if (!file) {
+            return res.status(400).send('No file uploaded');
+        }
+        
         const metadata = req.body.metadata ? JSON.parse(req.body.metadata) : {};
-        const projectId = metadata.projectId || 'default';
+        const projectId = (metadata.projectId || 'default').replace(/[^a-zA-Z0-9_-]/g, '');
+        if (!projectId) {
+            return res.status(400).send('Invalid project ID');
+        }
+        
         const projectDir = path.join(STORAGE_DIR, 'projects', projectId);
         if (!fs.existsSync(projectDir)) fs.mkdirSync(projectDir, { recursive: true });
 
-        // Move video file to project dir
-        const destVideoPath = path.join(projectDir, `${Date.now()}_${file.originalname}`);
+        // Sanitize filename to prevent path traversal
+        const safeFilename = path.basename(file.originalname).replace(/[^a-zA-Z0-9._-]/g, '_');
+        const destVideoPath = path.join(projectDir, `${Date.now()}_${safeFilename}`);
         fs.renameSync(file.path, destVideoPath);
 
         // Write metadata file

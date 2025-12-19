@@ -14,16 +14,18 @@ while true; do
     dir=$(dirname "$job")
     projectId=$(basename "$dir")
     echo "Found job for project: $projectId"
-    # Load job
-    jq -r '.videos[]' "$job" > /tmp/videos_list.txt
+    # Load job using a unique temporary file
+    tmpfile=$(mktemp)
+    jq -r '.videos[]' "$job" > "$tmpfile"
     pwd_move="$WORK_DIR/$projectId"
     mkdir -p "$pwd_move"
     # Copy videos to working folder (or symlink)
     while read -r v; do
       cp "$v" "$pwd_move/"
-    done < /tmp/videos_list.txt
+    done < "$tmpfile"
+    rm "$tmpfile"
 
-    cd "$pwd_move"
+    cd "$pwd_move" || { echo "Error: Failed to change directory to $pwd_move"; continue; }
     echo "Extract frames (one frame per second)"
     mkdir -p images
     for f in *.mp4; do

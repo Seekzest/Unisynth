@@ -1,10 +1,10 @@
 # Unisynth - Starter (unisynth-starter)
 
 This branch contains a starter dev stack and scaffolds for the Unisynth MVP:
-- server/ : Node.js Express ingestion server (presign, /uploads/notify, project state)
-- worker/ : Node worker stub that consumes jobs and creates a placeholder manifest
-- mobile/android/ : minimal Kotlin ARCore snippet to capture a PLY snapshot and upload via presigned URL
-- docker-compose.yml : MinIO + Redis + server + worker for local dev
+- server/ : Node.js Express ingestion server for video uploads and project state management
+- worker/ : Bash script that processes video segments through COLMAP/OpenMVS photogrammetry pipeline
+- mobile/android/ : Android app using CameraX for video capture with location metadata and background uploads
+- docker-compose.yml : MinIO + Redis + server for local dev
 
 Preview first: this branch will be opened as `unisynth-starter` for review. Do not push until reviewed.
 

@@ -2,6 +2,7 @@ package com.unisynth.app
 
 import android.content.Context
 import androidx.work.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
