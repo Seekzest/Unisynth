@@ -226,8 +226,8 @@ function broadcastToSession(sessionId, message, excludeConnectionId = null, skip
   if (!session) return;
 
   session.devices.forEach((device, deviceId) => {
+    // Skip the excluded connection if skipSelf is true
     if (skipSelf && device.connectionId === excludeConnectionId) return;
-    if (!skipSelf && device.connectionId === excludeConnectionId) return;
 
     const ws = wsConnections.get(device.connectionId);
     if (ws && ws.readyState === WebSocket.OPEN) {
