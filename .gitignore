@@ -1,0 +1,50 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Android
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+out/
+.navigation/
+*.hprof
+
+# Gradle
+.gradle/
+build/
+
+# Environment variables
+.env
+
+# Storage and data
+storage/
+data/
+*.log
+
+# Temporary files
+/tmp/
+*.tmp
+*.swp
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+*.code-workspace
