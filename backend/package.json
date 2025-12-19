@@ -1,0 +1,21 @@
+{
+  "name": "unisynth-backend",
+  "version": "1.0.0",
+  "description": "Unisynth backend server for collaborative 3D mesh capture",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"No tests specified yet\" && exit 0"
+  },
+  "keywords": ["3d", "vr", "camera", "mesh", "collaborative"],
+  "author": "Seekzest",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "uuid": "^13.0.0",
+    "ws": "^8.18.3"
+  }
+}
