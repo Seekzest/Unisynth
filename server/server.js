@@ -1,0 +1,85 @@
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
+const http = require('http');
+const socketIo = require('socket.io');
+const cors = require('cors');
+
+const PORT = process.env.PORT || 4000;
+const STORAGE_DIR = process.env.STORAGE_DIR || path.join(__dirname, 'storage');
+
+if (!fs.existsSync(STORAGE_DIR)) fs.mkdirSync(STORAGE_DIR, { recursive: true });
+
+const app = express();
+app.use(cors());
+const server = http.createServer(app);
+const io = new socketIo.Server(server, { cors: { origin: "*" }});
+
+const upload = multer({ dest: path.join(STORAGE_DIR, 'uploads/') });
+
+/*
+API:
+- POST /upload => multipart: video file + metadata JSON string field "metadata"
+- The server stores video, writes metadata JSON, and enqueues job (by projectId)
+*/
+
+app.post('/upload', upload.single('video'), (req, res) => {
+    try {
+        const file = req.file;
+        const metadata = req.body.metadata ? JSON.parse(req.body.metadata) : {};
+        const projectId = metadata.projectId || 'default';
+        const projectDir = path.join(STORAGE_DIR, 'projects', projectId);
+        if (!fs.existsSync(projectDir)) fs.mkdirSync(projectDir, { recursive: true });
+
+        // Move video file to project dir
+        const destVideoPath = path.join(projectDir, `${Date.now()}_${file.originalname}`);
+        fs.renameSync(file.path, destVideoPath);
+
+        // Write metadata file
+        const metaPath = destVideoPath + '.meta.json';
+        fs.writeFileSync(metaPath, JSON.stringify({ metadata, uploadedAt: Date.now(), storedPath: destVideoPath }, null, 2));
+
+        // Queue job for processing (simple "when enough files or manual trigger")
+        // For demo, we add to a queue file
+        enqueueProcessing(projectId, destVideoPath);
+
+        res.status(200).send('OK');
+    } catch (e) {
+        console.error(e);
+        res.status(500).send('Upload Failed');
+    }
+});
+
+app.get('/projects/:projectId/status', (req, res) => {
+    const projectId = req.params.projectId;
+    const jobFile = path.join(STORAGE_DIR, 'projects', projectId, 'job.json');
+    if (fs.existsSync(jobFile)) {
+        res.sendFile(jobFile);
+    } else {
+        res.json({ status: 'waiting', projectId });
+    }
+});
+
+io.on('connection', (socket) => {
+    console.log('ws connected', socket.id);
+    socket.on('joinProject', (projectId) => {
+        socket.join(`project-${projectId}`);
+    });
+});
+
+function enqueueProcessing(projectId, videoPath) {
+    const jobFile = path.join(STORAGE_DIR, 'projects', projectId, 'job.json');
+    const job = fs.existsSync(jobFile) ? JSON.parse(fs.readFileSync(jobFile)) : { projectId, videos: [], status: 'queued' };
+    job.videos.push(videoPath);
+    fs.writeFileSync(jobFile, JSON.stringify(job, null, 2));
+    // notify watchers
+    io.to(`project-${projectId}`).emit('upload', { projectId, videoPath });
+    // Optionally trigger worker (example: spawn shell)
+    // For demo we just keep job file; processing handled by external worker script which polls storage
+}
+
+server.listen(PORT, () => {
+    console.log(`Server listening on ${PORT}`);
+});
