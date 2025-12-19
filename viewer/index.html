@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unisynth Viewer - 3D Scene</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow: hidden;
+            background: #1a1a1a;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 300px;
+            z-index: 1000;
+        }
+
+        #controls h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        #controls p {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 12px;
+            color: #ccc;
+            margin-bottom: 5px;
+        }
+
+        .control-group select,
+        .control-group input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background: #2a2a2a;
+            color: white;
+            font-size: 14px;
+        }
+
+        .control-group button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: none;
+            background: #007AFF;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .control-group button:hover {
+            background: #0056b3;
+        }
+
+        #info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            z-index: 2000;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <div id="controls">
+        <h1>Unisynth Viewer</h1>
+        <p>3D Scene Reconstruction</p>
+        
+        <div class="control-group">
+            <label for="session-select">Select Session:</label>
+            <select id="session-select">
+                <option value="">Loading sessions...</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <button id="load-button">Load Session</button>
+        </div>
+        
+        <div class="control-group">
+            <label>Camera Controls:</label>
+            <p style="font-size: 11px; color: #888;">
+                • Left click + drag: Rotate<br>
+                • Right click + drag: Pan<br>
+                • Scroll: Zoom
+            </p>
+        </div>
+    </div>
+    
+    <div id="info">
+        <div>Cameras: <span id="camera-count">0</span></div>
+        <div>Recordings: <span id="recording-count">0</span></div>
+        <div>FPS: <span id="fps">0</span></div>
+    </div>
+    
+    <div id="loading" style="display: none;">
+        <div class="spinner"></div>
+        <div>Loading session data...</div>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+</body>
+</html>
