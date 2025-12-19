@@ -26,6 +26,17 @@ npm start
 - PORT - Server port (default: 4000)
 - STORAGE_DIR - Directory for storing uploaded videos and project data
 - REDIS_URL - Optional Redis URL for queue management
+- ALLOWED_ORIGINS - Comma-separated list of allowed CORS origins (default: *)
+
+## Security Considerations
+
+**This is a starter/MVP implementation. For production deployment, consider:**
+
+1. **Rate Limiting**: Add rate limiting middleware (e.g., express-rate-limit) to prevent abuse
+2. **Authentication**: Implement proper authentication/authorization for upload endpoints
+3. **File Size Limits**: Configure appropriate file size limits in multer
+4. **Input Validation**: Add additional validation for metadata fields
+5. **HTTPS**: Use HTTPS in production and configure CORS appropriately
 
 ## API Endpoints
 

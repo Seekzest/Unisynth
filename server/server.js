@@ -29,6 +29,9 @@ const upload = multer({ dest: path.join(STORAGE_DIR, 'uploads/') });
 API:
 - POST /upload => multipart: video file + metadata JSON string field "metadata"
 - The server stores video, writes metadata JSON, and enqueues job (by projectId)
+
+SECURITY NOTE: For production deployment, implement rate limiting on these endpoints
+to prevent abuse. Consider using express-rate-limit or similar middleware.
 */
 
 app.post('/upload', upload.single('video'), (req, res) => {
