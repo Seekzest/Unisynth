@@ -72,7 +72,7 @@ class VideoRecorder(private val context: Context) {
     private fun buildMetadata(projectId: String, location: Location?, file: File): String {
         val locJson = if (location != null) {
             """{"lat":${location.latitude},"lng":${location.longitude},"alt":${location.altitude},"acc":${location.accuracy}}"""
-        } else ""
+        } else "null"
         val device = android.os.Build.MODEL ?: "unknown"
         val cameraModel = "CameraX" // add actual camera info if needed
         val ts = System.currentTimeMillis()
